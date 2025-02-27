@@ -1,0 +1,36 @@
+﻿@model IEnumerable<PracticaCubosMVC.Models.Compra>
+
+<h2>🛍️ Historial de Compras</h2>
+
+@if (!Model.Any())
+{
+    <p>No hay compras registradas.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+                <th>Fecha de Pedido</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var compra in Model)
+            {
+                <tr>
+                    <td>@(compra.Cubo != null ? compra.Cubo.Nombre : "Desconocido")</td>
+                    <td>@compra.Cantidad</td>
+                    <td>$@compra.Precio</td>
+                    <td>$@(compra.Precio * compra.Cantidad)</td>
+                    <td>@compra.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="Index" class="btn btn-primary">⬅ Volver a la Tienda</a>
