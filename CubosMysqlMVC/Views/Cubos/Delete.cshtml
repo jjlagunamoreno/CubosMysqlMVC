@@ -1,0 +1,18 @@
+﻿@model PracticaCubosMVC.Models.Cubo
+
+@{
+    ViewData["Title"] = "Eliminar Cubo";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-danger">
+    <h4>¿Estás seguro de que deseas eliminar este cubo?</h4>
+    <p><strong>@Model.Nombre</strong> - @Model.Modelo (@Model.Marca)</p>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="IdCubo" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

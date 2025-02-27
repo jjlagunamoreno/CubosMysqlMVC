@@ -1,0 +1,37 @@
+﻿@model IEnumerable<PracticaCubosMVC.Models.Cubo>
+
+@{
+    ViewData["Title"] = "Lista de Cubos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Botón Nuevo Cubo -->
+<a asp-action="Create" class="btn btn-success mb-3">
+    <i class="fas fa-plus"></i> Nuevo Cubo
+</a>
+
+<div class="row">
+    @foreach (var cubo in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <img src="~/images/@cubo.Imagen" class="card-img-top" alt="@cubo.Nombre" style="height: 200px; object-fit: cover;" />
+                <div class="card-body">
+                    <h5 class="card-title">@cubo.Nombre</h5>
+                    <p class="card-text">
+                        Modelo: @cubo.Modelo <br />
+                        Marca: @cubo.Marca <br />
+                        Precio: $@cubo.Precio
+                    </p>
+                    <a asp-action="Details" asp-route-id="@cubo.IdCubo" class="btn btn-primary">
+                        Detalles
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@cubo.IdCubo" class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
