@@ -1,26 +1,33 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Hosting;
 using System.IO;
-using System.Linq;
 
 namespace PracticaCubosMVC.Helpers
 {
-    public enum Folders { Images }
+    public enum Folders { Images, Facturas, Uploads, Temporal }
 
     public class HelperPathProvider
     {
-        private IWebHostEnvironment hostEnvironment;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public HelperPathProvider(IWebHostEnvironment hostEnvironment)
         {
-            this.hostEnvironment = hostEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
 
         public string MapPath(string fileName, Folders folder)
         {
-            string carpeta = folder == Folders.Images ? "images" : "uploads";
-            string rootPath = this.hostEnvironment.WebRootPath;
+            string carpeta = folder switch
+            {
+                Folders.Images => "images",
+                Folders.Facturas => "facturas",
+                Folders.Uploads => "uploads",
+                Folders.Temporal => "temp",
+                _ => "uploads"
+            };
+
+            string rootPath = _hostEnvironment.WebRootPath;
             return Path.Combine(rootPath, carpeta, fileName);
         }
     }

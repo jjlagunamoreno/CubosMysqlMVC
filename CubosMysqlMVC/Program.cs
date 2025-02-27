@@ -11,12 +11,20 @@ builder.Services.AddDbContext<CubosContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("MySqlConnection"))
 );
 
-// REGISTRO DEL REPOSITORIO Y HELPER
+// REGISTRO DEL REPOSITORIO
 builder.Services.AddScoped<RepositoryCubos>();
-builder.Services.AddSingleton<HelperPathProvider>();
 
 // REGISTRO DE CONTROLADORES
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
+//HELPERS
+builder.Services.AddSingleton<HelperPathProvider>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<HelperSession>();
+builder.Services.AddSingleton<HelperCache>();
+
 
 var app = builder.Build();
 
@@ -34,5 +42,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseSession();
 
 app.Run();

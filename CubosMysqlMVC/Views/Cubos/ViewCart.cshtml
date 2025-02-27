@@ -1,0 +1,19 @@
+﻿@model IEnumerable<PracticaCubosMVC.Models.Cubo>
+
+<h2>🛒 Carrito de Compras</h2>
+
+@if (!Model.Any())
+{
+    <p>No hay cubos en el carrito.</p>
+}
+else
+{
+    <ul>
+        @foreach (var cubo in Model)
+        {
+            <li>@cubo.Nombre - $@cubo.Precio</li>
+        }
+    </ul>
+}
+
+<a asp-action="ClearCart" class="btn btn-danger">Vaciar Carrito</a>

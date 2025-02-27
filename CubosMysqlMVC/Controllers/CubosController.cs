@@ -11,12 +11,68 @@ namespace PracticaCubosMVC.Controllers
         private readonly RepositoryCubos _repo;
         private readonly HelperPathProvider _helperPath;
         private readonly ILogger<CubosController> _logger;
+        private readonly HelperSession _helperSession;
+        private readonly HelperCache _helperCache;
 
-        public CubosController(RepositoryCubos repo, HelperPathProvider helperPath, ILogger<CubosController> logger)
+        public CubosController(RepositoryCubos repo, HelperPathProvider helperPath,
+                ILogger<CubosController> logger, HelperSession helperSession,
+                HelperCache helperCache)
         {
             _repo = repo;
             _helperPath = helperPath;
             _logger = logger;
+            _helperSession = helperSession;
+            _helperCache = helperCache;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var cubos = await _repo.GetCubosAsync();
+            return View(cubos);
+        }
+
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            var cubo = await _repo.GetCuboByIdAsync(id);
+            if (cubo != null)
+            {
+                _helperSession.AddCuboToCart(cubo);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ViewCart()
+        {
+            var cart = _helperSession.GetCart();
+            return View(cart);
+        }
+
+        public IActionResult ClearCart()
+        {
+            _helperSession.ClearCart();
+            return RedirectToAction(nameof(ViewCart));
+        }
+
+        public async Task<IActionResult> AddToFavorites(int id)
+        {
+            var cubo = await _repo.GetCuboByIdAsync(id);
+            if (cubo != null)
+            {
+                _helperCache.AddCuboToFavorites(cubo);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ViewFavorites()
+        {
+            var favoritos = _helperCache.GetFavorites();
+            return View(favoritos);
+        }
+
+        public IActionResult ClearFavorites()
+        {
+            _helperCache.ClearFavorites();
+            return RedirectToAction(nameof(ViewFavorites));
         }
 
         public IActionResult Create()
@@ -66,12 +122,6 @@ namespace PracticaCubosMVC.Controllers
             }
 
             return View(cubo);
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var cubos = await _repo.GetCubosAsync();
-            return View(cubos);
         }
 
         public async Task<IActionResult> Details(int id)

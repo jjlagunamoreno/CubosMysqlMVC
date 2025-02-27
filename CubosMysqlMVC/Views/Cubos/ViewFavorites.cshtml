@@ -1,0 +1,19 @@
+﻿@model IEnumerable<PracticaCubosMVC.Models.Cubo>
+
+<h2>❤️ Favoritos</h2>
+
+@if (!Model.Any())
+{
+    <p>No hay cubos en favoritos.</p>
+}
+else
+{
+    <ul>
+        @foreach (var cubo in Model)
+        {
+            <li>@cubo.Nombre - $@cubo.Precio</li>
+        }
+    </ul>
+}
+
+<a asp-action="ClearFavorites" class="btn btn-danger">Eliminar Favoritos</a>

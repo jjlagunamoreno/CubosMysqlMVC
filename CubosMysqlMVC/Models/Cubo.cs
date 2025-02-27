@@ -9,7 +9,8 @@ namespace PracticaCubosMVC.Models
     {
         [Key]
         [Column("id_cubo")]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] // No lo genera la BD
+        //GENERAMOS DIRECTAMENTE EL ID DESDE EL MODEL
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int IdCubo { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]
