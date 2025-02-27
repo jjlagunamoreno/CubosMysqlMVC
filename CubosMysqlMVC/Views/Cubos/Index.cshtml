@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<PracticaCubosMVC.Models.Cubo>
 
-@{
-    ViewData["Title"] = "Lista de Cubos";
-}
-
 <h2 class="text-center">@ViewData["Title"]</h2>
 
 <div class="d-flex justify-content-center mb-4">
@@ -22,10 +18,10 @@
     {
         <div class="col-md-4">
             <div class="card mb-4 shadow-sm position-relative">
-                <!-- Ícono de Favoritos -->
-                <button class="btn btn-light favorite-btn position-absolute top-0 end-0 m-2" data-cubo-id="@cubo.IdCubo">
-                    <i class="fas fa-heart">❤️</i>
-                </button>
+                <a asp-action="ToggleFavorite" asp-route-id="@cubo.IdCubo" class="btn favorite-btn position-absolute top-0 end-0 m-2"
+                   style="border-radius: 50%; background-color: @(ViewData["Favorites"] is List<int> favs && favs.Contains(cubo.IdCubo) ? "red" : "lightgray")">
+                    ❤️
+                </a>
 
                 <img src="~/images/@cubo.Imagen" class="card-img-top" alt="@cubo.Nombre" style="height: 200px; object-fit: cover;" />
                 <div class="card-body text-center">
@@ -39,12 +35,13 @@
                         <a asp-action="Details" asp-route-id="@cubo.IdCubo" class="btn btn-primary w-50 me-1">Detalles</a>
                         <a asp-action="Delete" asp-route-id="@cubo.IdCubo" class="btn btn-danger w-50 ms-1">Eliminar</a>
                     </div>
-                    <a asp-action="AddToCart" asp-route-id="@cubo.IdCubo" class="btn btn-warning btn-lg w-100">🛒 Comprar</a>
+                    <a asp-action="ToggleCart" asp-route-id="@cubo.IdCubo" class="btn btn-warning btn-lg w-100">🛒 Comprar</a>
                 </div>
             </div>
         </div>
     }
 </div>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

@@ -25,25 +25,54 @@ namespace PracticaCubosMVC.Controllers
             _helperCache = helperCache;
         }
 
+        [HttpDelete]
+        public IActionResult RemoveFromCart(int id)
+        {
+            _helperSession.RemoveFromCart(id);
+            return Ok(); // Retorna 200 OK sin redirigir
+        }
+
         public async Task<IActionResult> Index()
         {
             var cubos = await _repo.GetCubosAsync();
             return View(cubos);
         }
 
-        public async Task<IActionResult> AddToCart(int id)
+        public async Task<IActionResult> ToggleFavorite(int id)
         {
             var cubo = await _repo.GetCuboByIdAsync(id);
             if (cubo != null)
             {
-                _helperSession.AddCuboToCart(cubo);
+                _helperCache.ToggleFavorite(cubo);
             }
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult ViewCart()
+        public async Task<IActionResult> ToggleCart(int id)
+        {
+            var cubo = await _repo.GetCuboByIdAsync(id);
+            if (cubo != null)
+            {
+                _helperSession.ToggleCartItem(cubo);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> UpdateCartQuantity(int id, int cantidad)
+        {
+            _helperSession.UpdateCartQuantity(id, cantidad);
+            return RedirectToAction(nameof(ViewCart));
+        }
+
+        public async Task<IActionResult> ViewCart()
         {
             var cart = _helperSession.GetCart();
+
+            foreach (var compra in cart)
+            {
+                compra.Cubo = await _repo.GetCuboByIdAsync(compra.IdCubo);
+            }
+
             return View(cart);
         }
 
@@ -51,16 +80,6 @@ namespace PracticaCubosMVC.Controllers
         {
             _helperSession.ClearCart();
             return RedirectToAction(nameof(ViewCart));
-        }
-
-        public async Task<IActionResult> AddToFavorites(int id)
-        {
-            var cubo = await _repo.GetCuboByIdAsync(id);
-            if (cubo != null)
-            {
-                _helperCache.AddCuboToFavorites(cubo);
-            }
-            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult ViewFavorites()

@@ -2,6 +2,7 @@
 using PracticaCubosMVC.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PracticaCubosMVC.Helpers
 {
@@ -15,10 +16,17 @@ namespace PracticaCubosMVC.Helpers
             _cache = cache;
         }
 
-        public void AddCuboToFavorites(Cubo cubo)
+        public void ToggleFavorite(Cubo cubo)
         {
-            List<Cubo> favoritos = GetFavorites() ?? new List<Cubo>();
-            favoritos.Add(cubo);
+            List<Cubo> favoritos = GetFavorites();
+            if (favoritos.Any(c => c.IdCubo == cubo.IdCubo))
+            {
+                favoritos.RemoveAll(c => c.IdCubo == cubo.IdCubo);
+            }
+            else
+            {
+                favoritos.Add(cubo);
+            }
             _cache.Set(FAVORITOS_KEY, favoritos, TimeSpan.FromMinutes(60));
         }
 

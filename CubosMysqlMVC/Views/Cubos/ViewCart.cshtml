@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PracticaCubosMVC.Models.Cubo>
+﻿@model IEnumerable<PracticaCubosMVC.Models.Compra>
 
 <h2>🛒 Carrito de Compras</h2>
 
@@ -8,12 +8,75 @@
 }
 else
 {
-    <ul>
-        @foreach (var cubo in Model)
-        {
-            <li>@cubo.Nombre - $@cubo.Precio</li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="cart-body">
+            @foreach (var compra in Model)
+            {
+                <tr id="row-@compra.IdCubo">
+                    <td>@(compra.Cubo != null ? compra.Cubo.Nombre : "Desconocido")</td>
+                    <td>
+                        <form asp-action="UpdateCartQuantity" method="get">
+                            <input type="hidden" name="id" value="@compra.IdCubo" />
+                            <input type="number" name="cantidad" value="@compra.Cantidad" min="1" onchange="this.form.submit()" class="form-control" style="width: 80px; display: inline-block;" />
+                        </form>
+                    </td>
+                    <td>$@compra.Precio</td>
+                    <td class="total-price" data-price="@compra.Precio" data-quantity="@compra.Cantidad">$@(compra.Precio * compra.Cantidad)</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-btn" data-id="@compra.IdCubo">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Precio Total:</td>
+                <td id="total-cart-price" class="fw-bold">$@Model.Sum(compra => compra.Precio * compra.Cantidad)</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="ClearCart" class="btn btn-danger">🗑️ Vaciar Carrito</a>
+        <a class="btn btn-success">💳 Comprar</a>
+    </div>
 }
 
-<a asp-action="ClearCart" class="btn btn-danger">Vaciar Carrito</a>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".remove-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let cuboId = this.getAttribute("data-id");
+
+                fetch(`/Cubos/RemoveFromCart/${cuboId}`, { method: "DELETE" })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById("row-" + cuboId).remove();
+
+                            // Actualizar el precio total
+                            let totalPrice = 0;
+                            document.querySelectorAll(".total-price").forEach(element => {
+                                let price = parseFloat(element.getAttribute("data-price"));
+                                let quantity = parseInt(element.getAttribute("data-quantity"));
+                                totalPrice += price * quantity;
+                            });
+                            document.getElementById("total-cart-price").innerText = `$${totalPrice}`;
+                        }
+                    })
+                    .catch(error => console.error("Error al eliminar:", error));
+            });
+        });
+    });
+</script>
